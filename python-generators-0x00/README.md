@@ -1,9 +1,6 @@
-
-<<<<<<< HEAD
-# ALX Python Generators Project Python-generators
+# ALX Python Generators Project
 =======
 # Generators Project
->>>>>>> f59bfd8 (Organized python-generators-0x00 project with screenshots and README)
 
 This repository contains a practical demonstration of Python generators for scalable and memory-efficient data processing. It integrates Python with MySQL to simulate real-world data streaming scenarios including row streaming, batch processing, lazy pagination, and on-the-fly aggregation.
 
