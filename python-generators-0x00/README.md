@@ -117,7 +117,6 @@ python3 2-main.py | head -n 5
 ```bash
 python3 3-main.py | head -n 7
 ```
-![task3](./images/task-3.png)
 
 
 ### Task 4 – Stream and Average Age
