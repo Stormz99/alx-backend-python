@@ -1,5 +1,5 @@
 # ALX Python Generators Project
-=======
+
 # Generators Project
 
 This repository contains a practical demonstration of Python generators for scalable and memory-efficient data processing. It integrates Python with MySQL to simulate real-world data streaming scenarios including row streaming, batch processing, lazy pagination, and on-the-fly aggregation.
