@@ -1,5 +1,5 @@
 
-# ALX Python Generators Project – `python-generators`
+# Generators Project
 
 This repository contains a practical demonstration of Python generators for scalable and memory-efficient data processing. It integrates Python with MySQL to simulate real-world data streaming scenarios including row streaming, batch processing, lazy pagination, and on-the-fly aggregation.
 
@@ -75,9 +75,10 @@ pip install mysql-connector-python python-dotenv
 ```bash
 docker run --name mysql-dev -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:8
 ```
-![docker_pull_mySQL] (./images/docker-pull-of-mysql.png)
+![docker_pull_mySQL](./images//docker-pull-of-my-sql.png)
 
-![docker-pull-complete] (./images/docker-pull-complete.png
+
+![docker-pull-complete](./images/docker-pull-complete.png)
 
 ### 4. Set Up Environment Variables
 Create a `.env` file in the root directory:
@@ -129,14 +130,11 @@ python3 4-main.py
 
 I added screenshots to the project which can be found in the `images/` directory:
 
-```markdown
-![full-task1] (./images/full-task1.png)
 
-```
+![full-task1](./images/full-task1.png)
 
-```markdown
-![full-task2] (./images/full-task2.png)
-```
+![full-task2](./images/full-task2.png)
+
 ---
 
 ## Notes
