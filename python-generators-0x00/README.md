@@ -96,7 +96,7 @@ python3 0-main.py
 ```
 This creates the database and populates it from the CSV file.
 
-![database-connection] (./images/database-connection.png)
+![database-connection](./images/database-connection.png)
 
 
 ---
@@ -117,7 +117,7 @@ python3 2-main.py | head -n 5
 ```bash
 python3 3-main.py | head -n 7
 ```
-![task3] (./images/task-3.png)
+![task3](./images/task-3.png)
 
 
 ### Task 4 – Stream and Average Age
