@@ -1,5 +1,5 @@
 import sys
-lazy_paginate = __import__('2-lazy_paginate').lazy_pagination
+lazy_paginate = __import__('2-lazy_paginate').lazy_paginate
 
 try:
     for page in lazy_paginate(50):
