@@ -8,7 +8,7 @@ def paginate_user(page_size, offset):
     connection.close()
     return rows
 
-def lazy_paginate(page_size):
+def lazy_pagination(page_size):
     offset = 0
     while True:
         page = paginate_user(page_size, offset)
