@@ -7,6 +7,9 @@ in the utils module.
 import unittest
 from parameterized import parameterized
 from utils import access_nested_map
+from unittest.mock import patch, Mock
+import requests
+
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -47,6 +50,37 @@ class TestAccessNestedMap(unittest.TestCase):
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
         self.assertEqual(str(cm.exception), f"'{expected_key}'")
+
+    def get_json(url):
+        response = requests.get(url)
+        return response.json()
+
+
+        result = get_json(url)
+        self.assertEqual(result, expected)
+        mock_get.assert_called_once_with(url)
+        
+    @parameterized.expand([
+        ("https://example.com", {"payload": True}),
+        ("https://api.github.com", {"data": "value"}),
+    ])
+    @patch('utils.requests.get')
+    def test_get_json(self, url: str, expected: dict, mock_get: Mock) -> None:
+        """
+        Test that get_json returns correct JSON response using mocked requests.get
+        """
+        mock_response = Mock()
+        mock_response.json.return_value = expected
+        mock_get.return_value = mock_response
+        
+        from utils import get_json
+        result = get_json(url)
+        self.assertEqual(result, expected)
+        # Ensure that requests.get was called with the correct URL
+        mock_get.assert_called_once_with(url)
+
+
+
 
 
 if __name__ == "__main__":
