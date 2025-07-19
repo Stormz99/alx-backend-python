@@ -12,7 +12,6 @@ from utils import access_nested_map
 class TestAccessNestedMap(unittest.TestCase):
     """
     Unit test class for the `access_nested_map` function in utils.py.
-    Test standard inputs and nested dictionary traversal.
     """
 
     @parameterized.expand([
@@ -36,7 +35,7 @@ class TestAccessNestedMap(unittest.TestCase):
         ({}, ("a",), 'a'),
         ({"a": 1}, ("a", "b"), 'b')
     ])
-    def test_access_nested_map_execption(
+    def test_access_nested_map_exception(
         self,
         nested_map: dict,
         path: tuple,
