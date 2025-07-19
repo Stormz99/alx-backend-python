@@ -9,6 +9,7 @@ from unittest.mock import patch, Mock
 from utils import access_nested_map, get_json, memoize
 import requests
 
+
 class TestAccessNestedMap(unittest.TestCase):
     """Test cases for access_nested_map."""
 
@@ -49,29 +50,28 @@ class TestGetJson(unittest.TestCase):
         self.assertEqual(get_json(url), expected)
         mock_get.assert_called_once_with(url)
 
+
 class TestMemoize(unittest.TestCase):
     """Test case for memoize decorator."""
-    
+
     def test_memoize(self):
         """Test memoize decorator."""
         class TestClass:
             def a_method(self):
                 return 42
-            
+
             @memoize
             def a_property(self):
                 return self.a_method()
-            
+
         obj = TestClass()
-        
+
         with patch.object(obj, "a_method") as mock_method:
             mock_method.return_value = 42
-            # First call: should call a_method
             self.assertEqual(obj.a_property, 42)
-            # Second call: should use cached result
             self.assertEqual(obj.a_property, 42)
             mock_method.assert_called_once()
-        
+
 
 if __name__ == "__main__":
     unittest.main()
