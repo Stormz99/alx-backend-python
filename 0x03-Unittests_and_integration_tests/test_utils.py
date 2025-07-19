@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-This module contains unit tests for functions in the utils module.
+Unit tests for utils.py functions.
 """
 
 import unittest
@@ -10,9 +10,7 @@ from utils import access_nested_map, get_json
 
 
 class TestAccessNestedMap(unittest.TestCase):
-    """
-    Unit test class for the `access_nested_map` function in utils.py.
-    """
+    """Test cases for access_nested_map."""
 
     @parameterized.expand([
         ({"a": 1}, ("a",), 1),
@@ -28,30 +26,27 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": 1}, ("a", "b"), 'b'),
     ])
     def test_access_nested_map_exception(self, nested_map, path, expected_key):
-        """Test access_nested_map raises KeyError for missing keys"""
+        """Test access_nested_map raises KeyError"""
         with self.assertRaises(KeyError) as cm:
             access_nested_map(nested_map, path)
         self.assertEqual(str(cm.exception), f"'{expected_key}'")
 
 
 class TestGetJson(unittest.TestCase):
-    """
-    Unit test class for the `get_json` function in utils.py.
-    """
+    """Test cases for get_json."""
 
     @parameterized.expand([
-        ("https://example.com", {"payload": True}),
-        ("https://api.github.com", {"data": "value"}),
+        ("http://example.com", {"payload": True}),
+        ("http://holberton.io", {"data": "value"}),
     ])
     @patch("utils.requests.get")
     def test_get_json(self, url, expected, mock_get):
-        """Test get_json returns expected result with mocked requests.get"""
+        """Test get_json returns correct result from mocked requests.get"""
         mock_response = Mock()
         mock_response.json.return_value = expected
         mock_get.return_value = mock_response
 
-        result = get_json(url)
-        self.assertEqual(result, expected)
+        self.assertEqual(get_json(url), expected)
         mock_get.assert_called_once_with(url)
 
 
