@@ -25,7 +25,9 @@ class TestGithubOrgClient(unittest.TestCase):
 
         client = GithubOrgClient(org_name)
         self.assertEqual(client.org, test_payload)
-        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        mock_get_json.assert_called_once_with(
+            f"https://api.github.com/orgs/{org_name}"
+        )
 
     @patch.object(GithubOrgClient, 'org', new_callable=PropertyMock)
     def test_public_repos_url(self, mock_org):
@@ -50,7 +52,8 @@ class TestGithubOrgClient(unittest.TestCase):
         mock_get_json.return_value = test_repos
 
         with patch.object(
-            GithubOrgClient, "_public_repos_url",
+            GithubOrgClient,
+            "_public_repos_url",
             new_callable=PropertyMock,
             return_value="https://api.github.com/orgs/google/repos"
         ) as mock_url:
@@ -58,7 +61,9 @@ class TestGithubOrgClient(unittest.TestCase):
             repos = client.public_repos()
 
             self.assertEqual(repos, ["repo1", "repo2", "repo3"])
-            mock_get_json.assert_called_once_with("https://api.github.com/orgs/google/repos")
+            mock_get_json.assert_called_once_with(
+                "https://api.github.com/orgs/google/repos"
+            )
             mock_url.assert_called_once()
 
     @parameterized.expand([
@@ -89,7 +94,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         cls.get_patcher = patch("requests.get")
         cls.mock_get = cls.get_patcher.start()
 
-        # Side effect to mock .json() responses in order
         cls.mock_get.side_effect = [
             Mock(**{"json.return_value": cls.org_payload}),
             Mock(**{"json.return_value": cls.repos_payload}),
