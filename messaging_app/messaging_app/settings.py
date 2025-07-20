@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'chats',
-    'users',
 ]
 
 MIDDLEWARE = [
@@ -134,4 +133,4 @@ REST_FRAMEWORK = {
     ],
 }
 # Custom user model
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'chats.User'
