@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'chats',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -132,3 +133,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
 }
+# Custom user model
+AUTH_USER_MODEL = 'users.User'
