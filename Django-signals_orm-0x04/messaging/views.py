@@ -56,6 +56,7 @@ def inbox(request):
     messages = (
         Message.objects
         .filter(receiver=request.user, parent_message__isnull=True)
+        .only('id', 'sender', 'receiver', 'content', 'created_at')
         .select_related('sender', 'receiver')
         .prefetch_related(
             Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
@@ -69,7 +70,7 @@ def inbox(request):
 def unread_inbox(request):
     unread_messages = (
         Message.unread
-        .for_user(request.user)
+        .unread_for_user(request.user)
     )
     return render(request, 'messaging/inbox.html', {'messages': unread_messages})
 
