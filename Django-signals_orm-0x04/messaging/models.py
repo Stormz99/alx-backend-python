@@ -18,6 +18,13 @@ class Message(models.Model):
         on_delete=models.SET_NULL,
         related_name='edited_messages'
     )
+    parent_message = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name='replies'
+    )
 
     def __str__(self):
         return f"Message from {self.sender} to {self.receiver}"
