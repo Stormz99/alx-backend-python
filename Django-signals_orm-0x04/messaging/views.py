@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.db.models import Prefetch
-from .models import Message
+import messaging.models
 import json
 
 
@@ -32,11 +32,11 @@ def send_message(request):
         parent_message = None
         if parent_id:
             try:
-                parent_message = Message.objects.get(id=parent_id)
-            except Message.DoesNotExist:
+                parent_message = messaging.models.Message.objects.get(id=parent_id)
+            except messaging.models.Message.DoesNotExist:
                 return JsonResponse({"error": "Parent message not found"}, status=404)
 
-        message = Message.objects.create(
+        message = messaging.models.Message.objects.create(
             sender=request.user,
             receiver=receiver,
             content=content,
@@ -53,36 +53,32 @@ def send_message(request):
 
 @login_required
 def inbox(request):
-    messages = (
-        Message.objects
-        .filter(receiver=request.user, parent_message__isnull=True)
-        .only('id', 'sender', 'receiver', 'content', 'created_at')
-        .select_related('sender', 'receiver')
-        .prefetch_related(
-            Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
-        )
-        .order_by('-created_at')
-    )
+    messages = messaging.models.Message.objects.filter(
+        receiver=request.user,
+        parent_message__isnull=True
+    ).only(
+        'id', 'sender', 'receiver', 'content', 'created_at'
+    ).select_related(
+        'sender', 'receiver'
+    ).prefetch_related(
+        Prefetch('replies', queryset=messaging.models.Message.objects.select_related('sender', 'receiver'))
+    ).order_by('-created_at')
+
     return render(request, 'messaging/inbox.html', {'messages': messages})
 
 
 @login_required
 def unread_inbox(request):
-    unread_messages = (
-        Message.unread
-        .unread_for_user(request.user)
-    )
+    unread_messages = messaging.models.Message.unread.unread_for_user(request.user)
     return render(request, 'messaging/inbox.html', {'messages': unread_messages})
 
 
 @login_required
 def threaded_conversation(request, message_id):
     def get_replies_recursive(message):
-        replies = (
-            Message.objects
-            .filter(parent_message=message)
-            .select_related('sender', 'receiver')
-        )
+        replies = messaging.models.Message.objects.filter(
+            parent_message=message
+        ).select_related('sender', 'receiver')
         return [
             {
                 'message': reply,
@@ -92,7 +88,7 @@ def threaded_conversation(request, message_id):
         ]
 
     root_message = get_object_or_404(
-        Message.objects.select_related('sender', 'receiver'),
+        messaging.models.Message.objects.select_related('sender', 'receiver'),
         id=message_id
     )
 
