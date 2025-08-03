@@ -22,8 +22,6 @@ class Message(models.Model):
     )
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # Edited fields
     edited = models.BooleanField(default=False)
     edited_at = models.DateTimeField(null=True, blank=True)
     edited_by = models.ForeignKey(
@@ -33,8 +31,6 @@ class Message(models.Model):
         on_delete=models.SET_NULL,
         related_name='edited_messages'
     )
-
-    # Threaded messaging
     parent_message = models.ForeignKey(
         'self',
         null=True,
@@ -42,12 +38,10 @@ class Message(models.Model):
         on_delete=models.CASCADE,
         related_name='replies'
     )
-
     read = models.BooleanField(default=False)
 
-    # Custom managers
-    objects = models.Manager()  # Default manager
-    unread = UnreadMessagesManager()  # Custom manager
+    objects = models.Manager()
+    unread = UnreadMessagesManager()
 
     def __str__(self):
         return f"Message from {self.sender.username} to {self.receiver.username}"

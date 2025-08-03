@@ -9,7 +9,7 @@ import json
 
 
 @login_required
-@csrf_exempt 
+@csrf_exempt
 def send_message(request):
     if request.method == "POST":
         try:
@@ -19,7 +19,7 @@ def send_message(request):
 
         content = data.get("content")
         receiver_id = data.get("receiver")
-        parent_id = data.get("parent_message")  
+        parent_id = data.get("parent_message")
 
         if not content or not receiver_id:
             return JsonResponse({"error": "Missing required fields"}, status=400)
