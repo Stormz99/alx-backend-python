@@ -2,6 +2,13 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+class UnreadMessagesManager(models.Manager):
+    def for_user(self, user):
+        return self.filter(receiver=user, read=False).select_related('sender').only(
+            'id', 'sender__username', 'content', 'created_at'
+        )
+
+
 class Message(models.Model):
     sender = models.ForeignKey(
         User,
@@ -36,8 +43,14 @@ class Message(models.Model):
         related_name='replies'
     )
 
+    read = models.BooleanField(default=False)
+
+    # Custom managers
+    objects = models.Manager()  # Default manager
+    unread = UnreadMessagesManager()  # Custom manager
+
     def __str__(self):
-        return f"Message from {self.sender} to {self.receiver}"
+        return f"Message from {self.sender.username} to {self.receiver.username}"
 
 
 class Notification(models.Model):
