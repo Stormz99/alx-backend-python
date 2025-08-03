@@ -1,6 +1,10 @@
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from .models import Message
+from django.db.models import Prefetch
 import json
 
 
@@ -37,3 +41,48 @@ def send_message(request):
         )
 
         return JsonResponse({"message": "Message sent successfully", "id": message.id})
+
+
+@login_required
+def inbox(request):
+    messages = (
+        Message.objects
+        .filter(receiver=request.user, parent_message__isnull=True)
+        .select_related('sender', 'receiver')
+        .prefetch_related(
+            Prefetch('replies', queryset=Message.objects.select_related('sender'))
+        )
+        .order_by('-created_at')
+    )
+    return render(request, 'messaging/inbox.html', {'messages': messages})
+
+
+@login_required
+def threaded_conversation(request, message_id):
+    def get_replies(message):
+        replies = (
+            Message.objects
+            .filter(parent_message=message)
+            .select_related('sender', 'receiver')
+            .prefetch_related(
+                Prefetch('replies', queryset=Message.objects.select_related('sender', 'receiver'))
+            )
+        )
+        return [
+            {
+                'message': reply,
+                'replies': get_replies(reply)
+            }
+            for reply in replies
+        ]
+
+    root_message = get_object_or_404(
+        Message.objects.select_related('sender', 'receiver'),
+        id=message_id
+    )
+    thread = {
+        'message': root_message,
+        'replies': get_replies(root_message)
+    }
+
+    return render(request, 'messaging/threaded_conversation.html', {'thread': thread})
