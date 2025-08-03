@@ -10,5 +10,15 @@ def create_notification(sender, instance, created, **kwargs):
         
 @receiver(post_save, sender=Message)
 def log_message_edit(sender, instance, created, **kwargs):
-    if not created:
-        print(f"Message edited: {instance.id} by {instance.sender.username}")
+    if not instance_pk:
+        return
+    
+    try:
+        old_message = Message.objects.get(pk=instance.pk)
+    except Message.DoesNotExist:
+        return
+    
+    if old_message.content != instance.content:
+        MessageHistory.objects.create(message=old_message, old_content=old_message.content)
+        instance.edited = True
+        instance.edited_at = timezone.now()
