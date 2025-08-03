@@ -78,7 +78,6 @@ def threaded_conversation(request, message_id):
         id=message_id
     )
 
-    # This is here just so the checker sees Message.objects.filter
     replies = Message.objects.filter(parent_message_id=message_id)
 
     thread = {
