@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
@@ -73,6 +74,7 @@ def unread_inbox(request):
     return render(request, 'messaging/inbox.html', {'messages': unread_messages})
 
 
+@cache_page(60)
 @login_required
 def threaded_conversation(request, message_id):
     def get_replies_recursive(message):
