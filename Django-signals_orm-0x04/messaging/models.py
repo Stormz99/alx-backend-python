@@ -1,14 +1,22 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
 
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
+    sender = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='sent_messages'
+    )
+    receiver = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='received_messages'
+    )
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # Edited fields
     edited = models.BooleanField(default=False)
     edited_at = models.DateTimeField(null=True, blank=True)
     edited_by = models.ForeignKey(
@@ -18,6 +26,8 @@ class Message(models.Model):
         on_delete=models.SET_NULL,
         related_name='edited_messages'
     )
+
+    # Threaded messaging
     parent_message = models.ForeignKey(
         'self',
         null=True,
@@ -40,7 +50,11 @@ class Notification(models.Model):
 
 
 class MessageHistory(models.Model):
-    message = models.ForeignKey(Message, on_delete=models.CASCADE, related_name='history')
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='history'
+    )
     old_content = models.TextField()
     edited_at = models.DateTimeField(auto_now_add=True)
 
