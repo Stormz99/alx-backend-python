@@ -13,7 +13,7 @@ def create_notification(sender, instance, created, **kwargs):
 @receiver(pre_save, sender=Message)
 def log_message_edit(sender, instance, **kwargs):
     if not instance.pk:
-        return  # new message, nothing to log
+        return
 
     try:
         old_message = Message.objects.get(pk=instance.pk)
@@ -27,3 +27,18 @@ def log_message_edit(sender, instance, **kwargs):
         )
         instance.edited = True
         instance.edited_at = timezone.now()
+
+@reciever(post_delete, sender=User)
+def cleanup_user_related_user(sender, instance, **kwargs):
+    # Deletw sent and recieved messages
+    Message.objects.filter(sender=instance).delete()
+    Message.objects.filter(receiver=instance).delete()
+    
+    # Delete notifications related to the user
+    Notification.objects.filter(user=instance).delete()
+    Notification.objects.filter(message_sender=instance).delete()
+    Notification.objects.filter(message_receiver=instance).delete()
+    
+    #Delete message histories related to the user message
+    MessageHistory.objects.filter(message__sender=instance).delete()
+    MessageHistory.objects.filter(message__receiver=instance).delete()
