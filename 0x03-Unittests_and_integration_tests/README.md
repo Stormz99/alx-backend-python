@@ -1,32 +1,37 @@
-# 0x03. Unittests and Integration Tests
+#!/usr/bin/env python3
+# Unittests and Integration Tests
 
-## Description
+This project contains unit and integration tests for a GitHub organization client built with Python.
 
-This project focuses on writing unit and integration tests for Python functions and modules using the `unittest` framework and the `parameterized` library.
+## 📁 Project Structure
 
-You will learn how to:
-- Write unittests to validate functionality
-- Test for exceptions
-- Use mocks to isolate behavior
-- Apply parameterized tests for cleaner test cases
+- `utils.py`: Utility functions including `access_nested_map`, `get_json`, and `memoize`.
+- `client.py`: Defines the `GithubOrgClient` class used to fetch organization data from GitHub.
+- `fixtures.py`: Contains test data used for mocking API responses.
+- `test_utils.py`: Contains parameterized unit tests for utility functions.
 
-## Tasks
+## 🧪 Features Tested
 
-- **Task 0:** Write parameterized tests for `access_nested_map` function.
-- **Task 1:** Test `access_nested_map` with `KeyError` exceptions.
-- **Task 2:** Use `@patch` to mock `requests.get` for testing an API call.
-- **Task 3:** Integration test with `patch` to mock external services.
+- Accessing values from nested dictionaries
+- Mocking external API calls
+- Memoization and caching
+- Integration testing of GitHub org repositories
 
-## Requirements
+## ✅ Requirements
 
-- All code is written in Python 3.7
-- Follows `pycodestyle` (version 2.5)
-- Includes docstrings for all modules, classes, and functions
-- Test files are executable
-- Test cases use `unittest` and `parameterized`
+- Python 3.7 (Ubuntu 18.04 LTS)
+- All files are executable and end with a new line
+- Code follows `pycodestyle` 2.5
+- Each module, class, and function has a proper documentation string
+- All functions and coroutines are type-annotated
 
-## Usage
+## 🧰 Setup
 
-Run a test file using:
+Install dependencies:
 ```bash
-./test_utils.py
+pip install requests parameterized
+
+Run tests:
+
+bash
+python -m unittest test_utils.py
