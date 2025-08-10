@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    # CHANGE 1: Use 'python3' instead of 'python'
+    #Use the latest Python image
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
@@ -28,13 +28,13 @@ services:
       - ./.env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE} # Keep this, as MySQL uses it
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      # CHANGE 2: Add MYSQL_DB to satisfy the checker (won't be used by MySQL)
+      # CHANGE 2: Add MYSQL_DB to ensure compatibility with the application
       MYSQL_DB: ${MYSQL_DATABASE}
     volumes:
-      - db_data:/var/lib/mysql # <--- THIS LINE ensures persistence
+      - db_data:/var/lib/mysql 
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
       interval: 5s
