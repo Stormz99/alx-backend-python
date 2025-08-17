@@ -1,0 +1,41 @@
+#!/bin/bash
+DEPLOYMENT_NAME="django-messaging-app"
+REPLICAS=3
+
+function wait_for_pods {
+  echo "Waiting for pods to be ready..."
+
+  kubectl wait --for=condition=ready pod -l app=$DEPLOYMENT_NAME --timeout=300s
+}
+echo "--> Checking for required tools: kubectl and wrk..."
+command -v kubectl >/dev/null 2>&1 || { echo >&2 "kubectl is not installed. Aborting."; exit 1; }
+command -v wrk >/dev/null 2>&1 || { echo >&2 "wrk is not installed. Aborting."; exit 1; }
+
+echo "--> Scaling deployment $DEPLOYMENT_NAME to $REPLICAS replicas..."
+kubectl scale deployment $DEPLOYMENT_NAME --replicas=$REPLICAS
+
+
+echo "--> Verifying running pods..."
+kubectl get pods -l app=$DEPLOYMENT_NAME
+
+POD_NAME=$(kubectl get pods -l app=$DEPLOYMENT_NAME -o jsonpath='{.items[0].metadata.name}')
+
+if [ -z "$POD_NAME" ]; then
+  echo "Error: No pods found for the deployment. Load test cannot be performed."
+  exit 1
+fi
+
+echo "--> Found pod $POD_NAME. Setting up port-forward for load testing..."
+
+kubectl port-forward $POD_NAME 8000:8000 >/dev/null 2>&1 &
+PORT_FORWARD_PID=$! 
+
+sleep 3
+
+echo "--> Starting a 30-second load test with 5 threads and 50 connections..."
+wrk -t5 -c50 -d30s "http://127.0.0.1:8000/"
+
+kill $PORT_FORWARD_PID
+
+echo "--> Monitoring resource usage of pods..."
+kubectl top pod -l app=$DEPLOYMENT_NAME
