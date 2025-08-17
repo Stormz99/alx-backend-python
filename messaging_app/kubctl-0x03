@@ -1,0 +1,48 @@
+#!/bin/bash
+DEPLOYMENT_NAME="django-messaging-app-blue"
+SERVICE_NAME="django-messaging-app-service"
+
+function command_exists {
+  command -v "$1" >/dev/null 2>&1
+}
+echo "--> Checking for required tools: kubectl and curl..."
+if ! command_exists kubectl; then
+  echo >&2 "kubectl is not installed. Aborting."
+  exit 1
+fi
+if ! command_exists curl; then
+  echo >&2 "curl is not installed. Aborting."
+  exit 1
+fi
+
+echo "--> Applying the updated deployment file to start the rolling update..."
+kubectl apply -f blue_deployment.yaml
+
+echo "--> Starting port-forward to monitor for downtime..."
+kubectl port-forward service/$SERVICE_NAME 8000:80 >/dev/null 2>&1 &
+PORT_FORWARD_PID=$!
+
+sleep 5
+
+while true; do
+  HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost:8000)
+  TIMESTAMP=$(date "+%H:%M:%S")
+  if [[ "$HTTP_STATUS" == "200" ]]; then
+    echo "[$TIMESTAMP] OK: HTTP status code $HTTP_STATUS"
+  else
+    echo "[$TIMESTAMP] FAILED: HTTP status code $HTTP_STATUS - Potential Downtime!"
+  fi
+  # Add a small delay between requests
+  sleep 1
+done &
+CURL_LOOP_PID=$!
+
+echo "--> Monitoring the rollout status of the deployment..."
+kubectl rollout status deployment/$DEPLOYMENT_NAME
+
+echo "--> Rolling update complete. Killing background processes."
+kill $PORT_FORWARD_PID
+kill $CURL_LOOP_PID
+
+echo "--> Verifying new pods are running and old ones are terminated..."
+kubectl get pods -l app=django-messaging-app,version=blue
