@@ -1,9 +1,5 @@
 #!/bin/bash
-
-# kurbeScript
-# Script to set up a local Kubernetes cluster with Minikube
-
-set -e  # Exit immediately if a command exits with a non-zero status
+set -e
 
 echo "=== Checking if Minikube is installed... ==="
 if ! command -v minikube &> /dev/null
